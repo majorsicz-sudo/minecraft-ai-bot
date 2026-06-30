@@ -1,10 +1,26 @@
-from flask import Flask
+import os
+from telegram import Update
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
-app = Flask(__name__)
+TOKEN = os.getenv("BOT_TOKEN")
 
-@app.route("/")
-def home():
-    return "Minecraft AI Bot работает!"
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "Привет! Я AI-помощник сервера Minecraft.\n"
+        "Пока я умею базовые команды, но скоро стану полноценным администратором сервера."
+    )
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)           
+async def status(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "Сервер работает ✅\n"
+        "ИИ-помощник онлайн 🤖"
+    )
+
+app = ApplicationBuilder().token(TOKEN).build()
+
+app.add_handler(CommandHandler("start", start))
+app.add_handler(CommandHandler("status", status))
+
+print("Бот запущен!")
+
+app.run_polling()
